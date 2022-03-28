@@ -1,0 +1,1349 @@
+
+<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <meta charset="UTF-8">
+
+  <title>CSS3 based LED clock - by Aamir Afridi</title>
+
+ 
+
+  <style>
+/***
+Spectrum Colorpicker v1.3.2
+https://github.com/bgrins/spectrum
+Author: Brian Grinstead
+License: MIT
+***/
+
+.sp-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    /* https://github.com/bgrins/spectrum/issues/40 */
+    z-index: 9999994;
+    overflow: hidden;
+}
+
+.sp-container.sp-flat {
+    position: relative;
+}
+
+/* Fix for * { box-sizing: border-box; } */
+.sp-container,
+.sp-container * {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+/* http://ansciath.tumblr.com/post/7347495869/css-aspect-ratio */
+.sp-top {
+    position: relative;
+    width: 100%;
+    display: inline-block;
+}
+
+.sp-top-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.sp-color {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 20%;
+}
+
+.sp-hue {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 84%;
+    height: 100%;
+}
+
+.sp-clear-enabled .sp-hue {
+    top: 33px;
+    height: 77.5%;
+}
+
+.sp-fill {
+    padding-top: 80%;
+}
+
+.sp-sat, .sp-val {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.sp-alpha-enabled .sp-top {
+    margin-bottom: 18px;
+}
+
+.sp-alpha-enabled .sp-alpha {
+    display: block;
+}
+
+.sp-alpha-handle {
+    position: absolute;
+    top: -4px;
+    bottom: -4px;
+    width: 6px;
+    left: 50%;
+    cursor: pointer;
+    border: 1px solid black;
+    background: white;
+    opacity: .8;
+}
+
+.sp-alpha {
+    display: none;
+    position: absolute;
+    bottom: -14px;
+    right: 0;
+    left: 0;
+    height: 8px;
+}
+
+.sp-alpha-inner {
+    border: solid 1px #333;
+}
+
+.sp-clear {
+    display: none;
+}
+
+.sp-clear.sp-clear-display {
+    background-position: center;
+}
+
+.sp-clear-enabled .sp-clear {
+    display: block;
+    position: absolute;
+    top: 0px;
+    right: 0;
+    bottom: 0;
+    left: 84%;
+    height: 28px;
+}
+
+/* Don't allow text selection */
+.sp-container, .sp-replacer, .sp-preview, .sp-dragger, .sp-slider, .sp-alpha, .sp-clear, .sp-alpha-handle, .sp-container.sp-dragging .sp-input, .sp-container button  {
+    -webkit-user-select:none;
+    -moz-user-select: -moz-none;
+    -o-user-select:none;
+    user-select: none;
+}
+
+.sp-container.sp-input-disabled .sp-input-container {
+    display: none;
+}
+.sp-container.sp-buttons-disabled .sp-button-container {
+    display: none;
+}
+.sp-palette-only .sp-picker-container {
+    display: none;
+}
+.sp-palette-disabled .sp-palette-container {
+    display: none;
+}
+
+.sp-initial-disabled .sp-initial {
+    display: none;
+}
+
+
+/* Gradients for hue, saturation and value instead of images.  Not pretty... but it works */
+.sp-sat {
+    background-image: -webkit-gradient(linear,  0 0, 100% 0, from(#FFF), to(rgba(204, 154, 129, 0)));
+    background-image: -webkit-linear-gradient(left, #FFF, rgba(204, 154, 129, 0));
+    background-image: -moz-linear-gradient(left, #fff, rgba(204, 154, 129, 0));
+    background-image: -o-linear-gradient(left, #fff, rgba(204, 154, 129, 0));
+    background-image: -ms-linear-gradient(left, #fff, rgba(204, 154, 129, 0));
+    background-image: linear-gradient(to right, #fff, rgba(204, 154, 129, 0));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType = 1, startColorstr=#FFFFFFFF, endColorstr=#00CC9A81)";
+    filter : progid:DXImageTransform.Microsoft.gradient(GradientType = 1, startColorstr='#FFFFFFFF', endColorstr='#00CC9A81');
+}
+.sp-val {
+    background-image: -webkit-gradient(linear, 0 100%, 0 0, from(#000000), to(rgba(204, 154, 129, 0)));
+    background-image: -webkit-linear-gradient(bottom, #000000, rgba(204, 154, 129, 0));
+    background-image: -moz-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));
+    background-image: -o-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));
+    background-image: -ms-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));
+    background-image: linear-gradient(to top, #000, rgba(204, 154, 129, 0));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#00CC9A81, endColorstr=#FF000000)";
+    filter : progid:DXImageTransform.Microsoft.gradient(startColorstr='#00CC9A81', endColorstr='#FF000000');
+}
+
+.sp-hue {
+    background: -moz-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background: -ms-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background: -o-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background: -webkit-gradient(linear, left top, left bottom, from(#ff0000), color-stop(0.17, #ffff00), color-stop(0.33, #00ff00), color-stop(0.5, #00ffff), color-stop(0.67, #0000ff), color-stop(0.83, #ff00ff), to(#ff0000));
+    background: -webkit-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+}
+
+/* IE filters do not support multiple color stops.
+   Generate 6 divs, line them up, and do two color gradients for each.
+   Yes, really.
+ */
+.sp-1 {
+    height:17%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0000', endColorstr='#ffff00');
+}
+.sp-2 {
+    height:16%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffff00', endColorstr='#00ff00');
+}
+.sp-3 {
+    height:17%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ff00', endColorstr='#00ffff');
+}
+.sp-4 {
+    height:17%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ffff', endColorstr='#0000ff');
+}
+.sp-5 {
+    height:16%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0000ff', endColorstr='#ff00ff');
+}
+.sp-6 {
+    height:17%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff00ff', endColorstr='#ff0000');
+}
+
+.sp-hidden {
+    display: none !important;
+}
+
+/* Clearfix hack */
+.sp-cf:before, .sp-cf:after { content: ""; display: table; }
+.sp-cf:after { clear: both; }
+.sp-cf { *zoom: 1; }
+
+/* Mobile devices, make hue slider bigger so it is easier to slide */
+@media (max-device-width: 480px) {
+    .sp-color { right: 40%; }
+    .sp-hue { left: 63%; }
+    .sp-fill { padding-top: 60%; }
+}
+.sp-dragger {
+   border-radius: 5px;
+   height: 5px;
+   width: 5px;
+   border: 1px solid #fff;
+   background: #000;
+   cursor: pointer;
+   position:absolute;
+   top:0;
+   left: 0;
+}
+.sp-slider {
+    position: absolute;
+    top:0;
+    cursor:pointer;
+    height: 3px;
+    left: -1px;
+    right: -1px;
+    border: 1px solid #000;
+    background: white;
+    opacity: .8;
+}
+
+/*
+Theme authors:
+Here are the basic themeable display options (colors, fonts, global widths).
+See http://bgrins.github.io/spectrum/themes/ for instructions.
+*/
+
+.sp-container {
+    border-radius: 0;
+    background-color: #ECECEC;
+    border: solid 1px #f0c49B;
+    padding: 0;
+}
+.sp-container, .sp-container button, .sp-container input, .sp-color, .sp-hue, .sp-clear
+{
+    font: normal 12px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.sp-top
+{
+    margin-bottom: 3px;
+}
+.sp-color, .sp-hue, .sp-clear
+{
+    border: solid 1px #666;
+}
+
+/* Input */
+.sp-input-container {
+    float:right;
+    width: 100px;
+    margin-bottom: 4px;
+}
+.sp-initial-disabled  .sp-input-container {
+    width: 100%;
+}
+.sp-input {
+   font-size: 12px !important;
+   border: 1px inset;
+   padding: 4px 5px;
+   margin: 0;
+   width: 100%;
+   background:transparent;
+   border-radius: 3px;
+   color: #222;
+}
+.sp-input:focus  {
+    border: 1px solid orange;
+}
+.sp-input.sp-validation-error
+{
+    border: 1px solid red;
+    background: #fdd;
+}
+.sp-picker-container , .sp-palette-container
+{
+    float:left;
+    position: relative;
+    padding: 10px;
+    padding-bottom: 300px;
+    margin-bottom: -290px;
+}
+.sp-picker-container
+{
+    width: 172px;
+    border-left: solid 1px #fff;
+}
+
+/* Palettes */
+.sp-palette-container
+{
+    border-right: solid 1px #ccc;
+}
+
+.sp-palette .sp-thumb-el {
+    display: block;
+    position:relative;
+    float:left;
+    width: 24px;
+    height: 15px;
+    margin: 3px;
+    cursor: pointer;
+    border:solid 2px transparent;
+}
+.sp-palette .sp-thumb-el:hover, .sp-palette .sp-thumb-el.sp-thumb-active {
+    border-color: orange;
+}
+.sp-thumb-el
+{
+    position:relative;
+}
+
+/* Initial */
+.sp-initial
+{
+    float: left;
+    border: solid 1px #333;
+}
+.sp-initial span {
+    width: 30px;
+    height: 25px;
+    border:none;
+    display:block;
+    float:left;
+    margin:0;
+}
+
+.sp-initial .sp-clear-display {
+    background-position: center;
+}
+
+/* Buttons */
+.sp-button-container {
+    float: right;
+}
+
+/* Replacer (the little preview div that shows up instead of the <input>) */
+.sp-replacer {
+    margin:0;
+    overflow:hidden;
+    cursor:pointer;
+    padding: 4px;
+    display:inline-block;
+    *zoom: 1;
+    *display: inline;
+    border: solid 1px #91765d;
+    background: #eee;
+    color: #333;
+    vertical-align: middle;
+}
+.sp-replacer:hover, .sp-replacer.sp-active {
+    border-color: #F0C49B;
+    color: #111;
+}
+.sp-replacer.sp-disabled {
+    cursor:default;
+    border-color: silver;
+    color: silver;
+}
+.sp-dd {
+    padding: 2px 0;
+    height: 16px;
+    line-height: 16px;
+    float:left;
+    font-size:10px;
+}
+.sp-preview
+{
+    position:relative;
+    width:25px;
+    height: 20px;
+    border: solid 1px #222;
+    margin-right: 5px;
+    float:left;
+    z-index: 0;
+}
+
+.sp-palette
+{
+    *width: 220px;
+    max-width: 220px;
+}
+.sp-palette .sp-thumb-el
+{
+    width:16px;
+    height: 16px;
+    margin:2px 1px;
+    border: solid 1px #d0d0d0;
+}
+
+.sp-container
+{
+    padding-bottom:0;
+}
+
+
+/* Buttons: http://hellohappy.org/css3-buttons/ */
+.sp-container button {
+  background-color: #eeeeee;
+  background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -o-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: linear-gradient(to bottom, #eeeeee, #cccccc);
+  border: 1px solid #ccc;
+  border-bottom: 1px solid #bbb;
+  border-radius: 3px;
+  color: #333;
+  font-size: 14px;
+  line-height: 1;
+  padding: 5px 4px;
+  text-align: center;
+  text-shadow: 0 1px 0 #eee;
+  vertical-align: middle;
+}
+.sp-container button:hover {
+    background-color: #dddddd;
+    background-image: -webkit-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: -moz-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: -ms-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: -o-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: linear-gradient(to bottom, #dddddd, #bbbbbb);
+    border: 1px solid #bbb;
+    border-bottom: 1px solid #999;
+    cursor: pointer;
+    text-shadow: 0 1px 0 #ddd;
+}
+.sp-container button:active {
+    border: 1px solid #aaa;
+    border-bottom: 1px solid #888;
+    -webkit-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    -moz-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    -ms-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    -o-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+}
+.sp-cancel
+{
+    font-size: 11px;
+    color: #d93f3f !important;
+    margin:0;
+    padding:2px;
+    margin-right: 5px;
+    vertical-align: middle;
+    text-decoration:none;
+
+}
+.sp-cancel:hover
+{
+    color: #d93f3f !important;
+    text-decoration: underline;
+}
+
+
+.sp-palette span:hover, .sp-palette span.sp-thumb-active
+{
+    border-color: #000;
+}
+
+.sp-preview, .sp-alpha, .sp-thumb-el
+{
+    position:relative;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==);
+}
+.sp-preview-inner, .sp-alpha-inner, .sp-thumb-inner
+{
+    display:block;
+    position:absolute;
+    top:0;left:0;bottom:0;right:0;
+}
+
+.sp-palette .sp-thumb-inner
+{
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+}
+
+.sp-palette .sp-thumb-light.sp-thumb-active .sp-thumb-inner
+{
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIVJREFUeNpiYBhsgJFMffxAXABlN5JruT4Q3wfi/0DsT64h8UD8HmpIPCWG/KemIfOJCUB+Aoacx6EGBZyHBqI+WsDCwuQ9mhxeg2A210Ntfo8klk9sOMijaURm7yc1UP2RNCMbKE9ODK1HM6iegYLkfx8pligC9lCD7KmRof0ZhjQACDAAceovrtpVBRkAAAAASUVORK5CYII=);
+}
+
+.sp-palette .sp-thumb-dark.sp-thumb-active .sp-thumb-inner
+{
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAMdJREFUOE+tkgsNwzAMRMugEAahEAahEAZhEAqlEAZhEAohEAYh81X2dIm8fKpEspLGvudPOsUYpxE2BIJCroJmEW9qJ+MKaBFhEMNabSy9oIcIPwrB+afvAUFoK4H0tMaQ3XtlrggDhOVVMuT4E5MMG0FBbCEYzjYT7OxLEvIHQLY2zWwQ3D+9luyOQTfKDiFD3iUIfPk8VqrKjgAiSfGFPecrg6HN6m/iBcwiDAo7WiBeawa+Kwh7tZoSCGLMqwlSAzVDhoK+6vH4G0P5wdkAAAAASUVORK5CYII=);
+}
+
+.sp-clear-display {
+    background-repeat:no-repeat;
+    background-position: center;
+    background-image: url(data:image/gif;base64,R0lGODlhFAAUAPcAAAAAAJmZmZ2dnZ6enqKioqOjo6SkpKWlpaampqenp6ioqKmpqaqqqqurq/Hx8fLy8vT09PX19ff39/j4+Pn5+fr6+vv7+wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAP8ALAAAAAAUABQAAAihAP9FoPCvoMGDBy08+EdhQAIJCCMybCDAAYUEARBAlFiQQoMABQhKUJBxY0SPICEYHBnggEmDKAuoPMjS5cGYMxHW3IiT478JJA8M/CjTZ0GgLRekNGpwAsYABHIypcAgQMsITDtWJYBR6NSqMico9cqR6tKfY7GeBCuVwlipDNmefAtTrkSzB1RaIAoXodsABiZAEFB06gIBWC1mLVgBa0AAOw==);
+}
+
+
+
+
+
+
+
+
+body {
+  background: #3b0209;
+}
+
+#clock {
+  margin-left: 50px;
+  margin-top: 50px;
+}
+
+.author,
+.author a {
+  color: white;
+}
+
+.author {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  opacity: 0.7;
+  font-family: sans-serif;
+}
+
+.group {
+  float: left;
+  margin-right: 90px;
+  -webkit-transform: skew(-5deg);
+  -moz-transform: skew(-5deg);
+  -ms-transform: skew(-5deg);
+  -o-transform: skew(-5deg);
+  transform: skew(-5deg);
+}
+
+.num-9 .ver.left.low, .num-0 .hor.mid, .group div {
+  opacity: 0.2;
+}
+
+.dots div {
+  position: relative;
+}
+
+.hexagon {
+  position: relative;
+}
+.hexagon.hor {
+  width: 100px;
+  height: 50px;
+}
+.hexagon.ver {
+  width: 50px;
+  height: 150px;
+}
+.hexagon.left {
+  margin-left: -52px;
+  margin-top: 2px;
+}
+.hexagon.left.low {
+  margin-left: -52px;
+}
+.hexagon.right {
+  margin-left: 101px;
+  margin-top: -150px;
+}
+.hexagon.right.low {
+  margin-left: 101px;
+}
+.hexagon.hor.mid {
+  margin-top: 1px;
+}
+.hexagon.hor.low {
+  margin-top: 1px;
+}
+
+.dots div {
+  background: #FA4031;
+}
+
+.hexagon {
+  background: #FA4031;
+}
+.hexagon:before, .hexagon:after {
+  background: #FA4031;
+}
+.hexagon:before, .hexagon:after {
+  content: "";
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  -webkit-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+.hexagon.hor:before {
+  left: -18px;
+  top: 8px;
+}
+.hexagon.hor:after {
+  right: -18px;
+  top: 8px;
+}
+.hexagon.ver:before {
+  top: -18px;
+  left: 8px;
+}
+.hexagon.ver:after {
+  bottom: -18px;
+  left: 8px;
+}
+
+#num-6 {
+  margin-right: 0;
+}
+
+
+.dots {
+  margin-top: 107px;
+  margin-left: -55px;
+}
+.dots div {
+  height: 50px;
+  width: 50px;
+  margin-top: 48px;
+  border-radius: 30px;
+}
+
+.num-0 div, .num-9 div, .num-8 div {
+  opacity: 1;
+}
+
+.num-1 .ver.right.up, .num-1 .ver.right.low {
+  opacity: 1;
+}
+
+.num-3 .ver.right.low, .num-2 .ver.right.up, .num-3 .ver.right.up, .num-7 .ver.right.up {
+  opacity: 1;
+}
+
+.num-4 .ver.right.up, .num-4 .ver.right.low {
+  opacity: 1;
+}
+
+.num-5 .ver.right.low, .num-7 .ver.right.low, .num-6 .ver.right.low, .num-2 .hor.top, .num-7 .hor.top, .num-3 .hor.top, .num-6 .hor.top, .num-5 .hor.top, .num-2 .hor.mid, .num-3 .hor.mid, .num-4 .hor.mid, .num-6 .hor.mid, .num-5 .hor.mid, .num-2 .ver.left.low, .num-6 .ver.left.low, .num-4 .ver.left.up, .num-5 .ver.left.up, .num-6 .ver.left.up, .num-2 .hor.low, .num-3 .hor.low, .num-5 .hor.low, .num-6 .hor.low, .dots div {
+  opacity: 1;
+}
+
+
+
+
+
+  </style>
+
+ </head>
+
+<body>
+<section id="clock">
+  <div id="num-1" class="group">
+    <div class="hexagon hor top"></div>
+    <div class="hexagon ver left up"></div>
+    <div class="hexagon ver right up"></div>
+    <div class="hexagon hor mid"></div>
+    <div class="hexagon ver left low"></div>
+    <div class="hexagon ver right low"></div>
+    <div class="hexagon hor low"></div>
+  </div>
+  <div class="dots group">
+    <div class="up"></div>
+    <div class="down"></div>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script>
+/**
+ * StyleFix 1.0.3 & PrefixFree 1.0.7
+ * @author Lea Verou
+ * MIT license
+ */
+
+(function(){
+
+if(!window.addEventListener) {
+  return;
+}
+
+var self = window.StyleFix = {
+  link: function(link) {
+    try {
+      // Ignore stylesheets with data-noprefix attribute as well as alternate stylesheets
+      if(link.rel !== 'stylesheet' || link.hasAttribute('data-noprefix')) {
+        return;
+      }
+    }
+    catch(e) {
+      return;
+    }
+
+    var url = link.href || link.getAttribute('data-href'),
+        base = url.replace(/[^\/]+$/, ''),
+        base_scheme = (/^[a-z]{3,10}:/.exec(base) || [''])[0],
+        base_domain = (/^[a-z]{3,10}:\/\/[^\/]+/.exec(base) || [''])[0],
+        base_query = /^([^?]*)\??/.exec(url)[1],
+        parent = link.parentNode,
+        xhr = new XMLHttpRequest(),
+        process;
+
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState === 4) {
+        process();
+      }
+    };
+
+    process = function() {
+        var css = xhr.responseText;
+
+        if(css && link.parentNode && (!xhr.status || xhr.status < 400 || xhr.status > 600)) {
+          css = self.fix(css, true, link);
+
+          // Convert relative URLs to absolute, if needed
+          if(base) {
+            css = css.replace(/url\(\s*?((?:"|')?)(.+?)\1\s*?\)/gi, function($0, quote, url) {
+              if(/^([a-z]{3,10}:|#)/i.test(url)) { // Absolute & or hash-relative
+                return $0;
+              }
+              else if(/^\/\//.test(url)) { // Scheme-relative
+                // May contain sequences like /../ and /./ but those DO work
+                return 'url("' + base_scheme + url + '")';
+              }
+              else if(/^\//.test(url)) { // Domain-relative
+                return 'url("' + base_domain + url + '")';
+              }
+              else if(/^\?/.test(url)) { // Query-relative
+                return 'url("' + base_query + url + '")';
+              }
+              else {
+                // Path-relative
+                return 'url("' + base + url + '")';
+              }
+            });
+
+            // behavior URLs shoudn’t be converted (Issue #19)
+            // base should be escaped before added to RegExp (Issue #81)
+            var escaped_base = base.replace(/([\\\^\$*+[\]?{}.=!:(|)])/g,"\\$1");
+            css = css.replace(RegExp('\\b(behavior:\\s*?url\\(\'?"?)' + escaped_base, 'gi'), '$1');
+            }
+
+          var style = document.createElement('style');
+          style.textContent = css;
+          style.media = link.media;
+          style.disabled = link.disabled;
+          style.setAttribute('data-href', link.getAttribute('href'));
+
+          parent.insertBefore(style, link);
+          parent.removeChild(link);
+
+          style.media = link.media; // Duplicate is intentional. See issue #31
+        }
+    };
+
+    try {
+      xhr.open('GET', url);
+      xhr.send(null);
+    } catch (e) {
+      // Fallback to XDomainRequest if available
+      if (typeof XDomainRequest != "undefined") {
+        xhr = new XDomainRequest();
+        xhr.onerror = xhr.onprogress = function() {};
+        xhr.onload = process;
+        xhr.open("GET", url);
+        xhr.send(null);
+      }
+    }
+
+    link.setAttribute('data-inprogress', '');
+  },
+
+  styleElement: function(style) {
+    if (style.hasAttribute('data-noprefix')) {
+      return;
+    }
+    var disabled = style.disabled;
+
+    style.textContent = self.fix(style.textContent, true, style);
+
+    style.disabled = disabled;
+  },
+
+  styleAttribute: function(element) {
+    var css = element.getAttribute('style');
+
+    css = self.fix(css, false, element);
+
+    element.setAttribute('style', css);
+  },
+
+  process: function() {
+    // Linked stylesheets
+    $('link[rel="stylesheet"]:not([data-inprogress])').forEach(StyleFix.link);
+
+    // Inline stylesheets
+    $('style').forEach(StyleFix.styleElement);
+
+    // Inline styles
+    $('[style]').forEach(StyleFix.styleAttribute);
+  },
+
+  register: function(fixer, index) {
+    (self.fixers = self.fixers || [])
+      .splice(index === undefined? self.fixers.length : index, 0, fixer);
+  },
+
+  fix: function(css, raw, element) {
+    for(var i=0; i<self.fixers.length; i++) {
+      css = self.fixers[i](css, raw, element) || css;
+    }
+
+    return css;
+  },
+
+  camelCase: function(str) {
+    return str.replace(/-([a-z])/g, function($0, $1) { return $1.toUpperCase(); }).replace('-','');
+  },
+
+  deCamelCase: function(str) {
+    return str.replace(/[A-Z]/g, function($0) { return '-' + $0.toLowerCase() });
+  }
+};
+
+/**************************************
+ * Process styles
+ **************************************/
+(function(){
+  setTimeout(function(){
+    $('link[rel="stylesheet"]').forEach(StyleFix.link);
+  }, 10);
+
+  document.addEventListener('DOMContentLoaded', StyleFix.process, false);
+})();
+
+function $(expr, con) {
+  return [].slice.call((con || document).querySelectorAll(expr));
+}
+
+})();
+
+/**
+ * PrefixFree
+ */
+(function(root){
+
+if(!window.StyleFix || !window.getComputedStyle) {
+  return;
+}
+
+// Private helper
+function fix(what, before, after, replacement, css) {
+  what = self[what];
+
+  if(what.length) {
+    var regex = RegExp(before + '(' + what.join('|') + ')' + after, 'gi');
+
+    css = css.replace(regex, replacement);
+  }
+
+  return css;
+}
+
+var self = window.PrefixFree = {
+  prefixCSS: function(css, raw, element) {
+    var prefix = self.prefix;
+
+    // Gradient angles hotfix
+    if(self.functions.indexOf('linear-gradient') > -1) {
+      // Gradients are supported with a prefix, convert angles to legacy
+      css = css.replace(/(\s|:|,)(repeating-)?linear-gradient\(\s*(-?\d*\.?\d*)deg/ig, function ($0, delim, repeating, deg) {
+        return delim + (repeating || '') + 'linear-gradient(' + (90-deg) + 'deg';
+      });
+    }
+
+    css = fix('functions', '(\\s|:|,)', '\\s*\\(', '$1' + prefix + '$2(', css);
+    css = fix('keywords', '(\\s|:)', '(\\s|;|\\}|$)', '$1' + prefix + '$2$3', css);
+    css = fix('properties', '(^|\\{|\\s|;)', '\\s*:', '$1' + prefix + '$2:', css);
+
+    // Prefix properties *inside* values (issue #8)
+    if (self.properties.length) {
+      var regex = RegExp('\\b(' + self.properties.join('|') + ')(?!:)', 'gi');
+
+      css = fix('valueProperties', '\\b', ':(.+?);', function($0) {
+        return $0.replace(regex, prefix + "$1")
+      }, css);
+    }
+
+    if(raw) {
+      css = fix('selectors', '', '\\b', self.prefixSelector, css);
+      css = fix('atrules', '@', '\\b', '@' + prefix + '$1', css);
+    }
+
+    // Fix double prefixing
+    css = css.replace(RegExp('-' + prefix, 'g'), '-');
+
+    // Prefix wildcard
+    css = css.replace(/-\*-(?=[a-z]+)/gi, self.prefix);
+
+    return css;
+  },
+
+  property: function(property) {
+    return (self.properties.indexOf(property)? self.prefix : '') + property;
+  },
+
+  value: function(value, property) {
+    value = fix('functions', '(^|\\s|,)', '\\s*\\(', '$1' + self.prefix + '$2(', value);
+    value = fix('keywords', '(^|\\s)', '(\\s|$)', '$1' + self.prefix + '$2$3', value);
+
+    // TODO properties inside values
+
+    return value;
+  },
+
+  // Warning: Prefixes no matter what, even if the selector is supported prefix-less
+  prefixSelector: function(selector) {
+    return selector.replace(/^:{1,2}/, function($0) { return $0 + self.prefix })
+  },
+
+  // Warning: Prefixes no matter what, even if the property is supported prefix-less
+  prefixProperty: function(property, camelCase) {
+    var prefixed = self.prefix + property;
+
+    return camelCase? StyleFix.camelCase(prefixed) : prefixed;
+  }
+};
+
+/**************************************
+ * Properties
+ **************************************/
+(function() {
+  var prefixes = {},
+    properties = [],
+    shorthands = {},
+    style = getComputedStyle(document.documentElement, null),
+    dummy = document.createElement('div').style;
+
+  // Why are we doing this instead of iterating over properties in a .style object? Cause Webkit won't iterate over those.
+  var iterate = function(property) {
+    if(property.charAt(0) === '-') {
+      properties.push(property);
+
+      var parts = property.split('-'),
+        prefix = parts[1];
+
+      // Count prefix uses
+      prefixes[prefix] = ++prefixes[prefix] || 1;
+
+      // This helps determining shorthands
+      while(parts.length > 3) {
+        parts.pop();
+
+        var shorthand = parts.join('-');
+
+        if(supported(shorthand) && properties.indexOf(shorthand) === -1) {
+          properties.push(shorthand);
+        }
+      }
+    }
+  },
+  supported = function(property) {
+    return StyleFix.camelCase(property) in dummy;
+  }
+
+  // Some browsers have numerical indices for the properties, some don't
+  if(style.length > 0) {
+    for(var i=0; i<style.length; i++) {
+      iterate(style[i])
+    }
+  }
+  else {
+    for(var property in style) {
+      iterate(StyleFix.deCamelCase(property));
+    }
+  }
+
+  // Find most frequently used prefix
+  var highest = {uses:0};
+  for(var prefix in prefixes) {
+    var uses = prefixes[prefix];
+
+    if(highest.uses < uses) {
+      highest = {prefix: prefix, uses: uses};
+    }
+  }
+
+  self.prefix = '-' + highest.prefix + '-';
+  self.Prefix = StyleFix.camelCase(self.prefix);
+
+  self.properties = [];
+
+  // Get properties ONLY supported with a prefix
+  for(var i=0; i<properties.length; i++) {
+    var property = properties[i];
+
+    if(property.indexOf(self.prefix) === 0) { // we might have multiple prefixes, like Opera
+      var unprefixed = property.slice(self.prefix.length);
+
+      if(!supported(unprefixed)) {
+        self.properties.push(unprefixed);
+      }
+    }
+  }
+
+  // IE fix
+  if(self.Prefix == 'Ms'
+    && !('transform' in dummy)
+    && !('MsTransform' in dummy)
+    && ('msTransform' in dummy)) {
+    self.properties.push('transform', 'transform-origin');
+  }
+
+  self.properties.sort();
+})();
+
+/**************************************
+ * Values
+ **************************************/
+(function() {
+// Values that might need prefixing
+var functions = {
+  'linear-gradient': {
+    property: 'backgroundImage',
+    params: 'red, teal'
+  },
+  'calc': {
+    property: 'width',
+    params: '1px + 5%'
+  },
+  'element': {
+    property: 'backgroundImage',
+    params: '#foo'
+  },
+  'cross-fade': {
+    property: 'backgroundImage',
+    params: 'url(a.png), url(b.png), 50%'
+  }
+};
+
+functions['repeating-linear-gradient'] =
+functions['repeating-radial-gradient'] =
+functions['radial-gradient'] =
+functions['linear-gradient'];
+
+// Note: The properties assigned are just to *test* support.
+// The keywords will be prefixed everywhere.
+var keywords = {
+  'initial': 'color',
+  'zoom-in': 'cursor',
+  'zoom-out': 'cursor',
+  'box': 'display',
+  'flexbox': 'display',
+  'inline-flexbox': 'display',
+  'flex': 'display',
+  'inline-flex': 'display',
+  'grid': 'display',
+  'inline-grid': 'display',
+  'min-content': 'width'
+};
+
+self.functions = [];
+self.keywords = [];
+
+var style = document.createElement('div').style;
+
+function supported(value, property) {
+  style[property] = '';
+  style[property] = value;
+
+  return !!style[property];
+}
+
+for (var func in functions) {
+  var test = functions[func],
+    property = test.property,
+    value = func + '(' + test.params + ')';
+
+  if (!supported(value, property)
+    && supported(self.prefix + value, property)) {
+    // It's supported, but with a prefix
+    self.functions.push(func);
+  }
+}
+
+for (var keyword in keywords) {
+  var property = keywords[keyword];
+
+  if (!supported(keyword, property)
+    && supported(self.prefix + keyword, property)) {
+    // It's supported, but with a prefix
+    self.keywords.push(keyword);
+  }
+}
+
+})();
+
+/**************************************
+ * Selectors and @-rules
+ **************************************/
+(function() {
+
+var
+selectors = {
+  ':read-only': null,
+  ':read-write': null,
+  ':any-link': null,
+  '::selection': null
+},
+
+atrules = {
+  'keyframes': 'name',
+  'viewport': null,
+  'document': 'regexp(".")'
+};
+
+self.selectors = [];
+self.atrules = [];
+
+var style = root.appendChild(document.createElement('style'));
+
+function supported(selector) {
+  style.textContent = selector + '{}';  // Safari 4 has issues with style.innerHTML
+
+  return !!style.sheet.cssRules.length;
+}
+
+for(var selector in selectors) {
+  var test = selector + (selectors[selector]? '(' + selectors[selector] + ')' : '');
+
+  if(!supported(test) && supported(self.prefixSelector(test))) {
+    self.selectors.push(selector);
+  }
+}
+
+for(var atrule in atrules) {
+  var test = atrule + ' ' + (atrules[atrule] || '');
+
+  if(!supported('@' + test) && supported('@' + self.prefix + test)) {
+    self.atrules.push(atrule);
+  }
+}
+
+root.removeChild(style);
+
+})();
+
+// Properties that accept properties as their value
+self.valueProperties = [
+  'transition',
+  'transition-property'
+]
+
+// Add class for current prefix
+root.className += ' ' + self.prefix;
+
+StyleFix.register(self.prefixCSS);
+
+})(document.documentElement);
+
+</script>
+<script src="./js/Sizzle.js"></script>
+
+  <script>
+    $(function () { //return;
+    var
+        $group1 = $('.group:first'),
+        cssClasses = $group1.attr('class') + ' num-',
+        $clock = $('#clock'),
+        $newDots = $('.dots').clone();
+
+    //remove dots original copy
+    $('.dots').remove();
+
+    //append digits and dots to the clock container
+    $clock.append(
+      $group1.clone().attr('id', 'num-2'),
+      $newDots,
+      $group1.clone().attr('id', 'num-3'),
+      $group1.clone().attr('id', 'num-4'),
+      $newDots.clone(),
+      $group1.clone().attr('id', 'num-5'),
+      $group1.clone().attr('id', 'num-6'),
+      '<br style="clear:both" />'
+    )
+
+    var $group2 = $('#num-2'),
+        $group3 = $('#num-3'),
+        $group4 = $('#num-4'),
+        $group5 = $('#num-5'),
+        $group6 = $('#num-6');
+
+    function updateClock() {
+        // Gets the current time
+        var now = new Date();
+
+        // Get the hours, minutes and seconds from the current time
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        var seconds = now.getSeconds();
+
+        // Format hours, minutes and seconds
+        if (hours < 10) {
+            hours = "0" + hours;
+        }
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        if (seconds < 10) {
+            seconds = "0" + seconds;
+        }
+
+        hours = hours.toString().split('');
+        minutes = minutes.toString().split('');
+        seconds = seconds.toString().split('');
+
+        $group1.attr('class', cssClasses + hours[0])
+        $group2.attr('class', cssClasses + hours[1])
+        $group3.attr('class', cssClasses + minutes[0])
+        $group4.attr('class', cssClasses + minutes[1])
+        $group5.attr('class', cssClasses + seconds[0])
+        $group6.attr('class', cssClasses + seconds[1])
+
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    //color picker
+    $('head').append('<style></style>');
+    var $style = $('head style:last');
+
+  $('input:first')
+    .spectrum({
+        color: "#FA4031",
+        showInput: true,
+        className: "full-spectrum",
+        showInitial: true,
+        showPalette: true,
+        showSelectionPalette: true,
+        maxPaletteSize: 10,
+        preferredFormat: "hex",
+        localStorageKey: "spectrum.demo",
+        move: function(color) {
+            $style
+              .empty()
+            .html(
+              '.dots div, .hexagon, .hexagon:after,'
+              +' .hexagon:before { background:'
+              + color
+              + '}')
+        },
+        palette: [
+            ["rgb(0, 0, 0)", "rgb(67, 67, 67)", "rgb(102, 102, 102)",
+            "rgb(204, 204, 204)", "rgb(217, 217, 217)","rgb(255, 255, 255)"],
+            ["rgb(152, 0, 0)", "rgb(255, 0, 0)", "rgb(255, 153, 0)", "rgb(255, 255, 0)", "rgb(0, 255, 0)",
+            "rgb(0, 255, 255)", "rgb(74, 134, 232)", "rgb(0, 0, 255)", "rgb(153, 0, 255)", "rgb(255, 0, 255)"], 
+            ["rgb(230, 184, 175)", "rgb(244, 204, 204)", "rgb(252, 229, 205)", "rgb(255, 242, 204)", "rgb(217, 234, 211)", 
+            "rgb(208, 224, 227)", "rgb(201, 218, 248)", "rgb(207, 226, 243)", "rgb(217, 210, 233)", "rgb(234, 209, 220)", 
+            "rgb(221, 126, 107)", "rgb(234, 153, 153)", "rgb(249, 203, 156)", "rgb(255, 229, 153)", "rgb(182, 215, 168)", 
+            "rgb(162, 196, 201)", "rgb(164, 194, 244)", "rgb(159, 197, 232)", "rgb(180, 167, 214)", "rgb(213, 166, 189)", 
+            "rgb(204, 65, 37)", "rgb(224, 102, 102)", "rgb(246, 178, 107)", "rgb(255, 217, 102)", "rgb(147, 196, 125)", 
+            "rgb(118, 165, 175)", "rgb(109, 158, 235)", "rgb(111, 168, 220)", "rgb(142, 124, 195)", "rgb(194, 123, 160)",
+            "rgb(166, 28, 0)", "rgb(204, 0, 0)", "rgb(230, 145, 56)", "rgb(241, 194, 50)", "rgb(106, 168, 79)",
+            "rgb(69, 129, 142)", "rgb(60, 120, 216)", "rgb(61, 133, 198)", "rgb(103, 78, 167)", "rgb(166, 77, 121)",
+            "rgb(91, 15, 0)", "rgb(102, 0, 0)", "rgb(120, 63, 4)", "rgb(127, 96, 0)", "rgb(39, 78, 19)", 
+            "rgb(12, 52, 61)", "rgb(28, 69, 135)", "rgb(7, 55, 99)", "rgb(32, 18, 77)", "rgb(76, 17, 48)"]
+        ]
+    }); 
+
+    //zoom clock
+    var transFormPrefixed = PrefixFree.prefixProperty('transform');
+    $('#defaultSlider').change(function() {
+      $clock.attr(
+        'style', 
+        transFormPrefixed + ': scale('+this.value+')'
+      );
+    }).change();
+});
+  </script>
+
+</body></html>
